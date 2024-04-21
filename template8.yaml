@@ -1,0 +1,26 @@
+ApplicationInstances1:
+  Type: AWS::EC2::Instance
+  Properties:
+    ImageId: ami-04e5276ebb8451442
+    SecurityGroupIds:
+      - !Ref SecurityGroupApplication
+    SubnetId: !Ref PublicSubnet1
+    UserData:
+      'Fn::Base64': |
+        #!/bin/bash
+        yum update -y
+        curl -fsSL https://rpm.nodesource.com/setup_16.x | bash -
+        yum install -y nodejs
+        yum install -y git
+        npm install pm2 -g
+        cd home/ec2-user
+        git clone https://github.com/ZeitakuXIV/iot-dashboard-lksbdg.git
+        cd iot-dashboard-lksbdg
+        npm install
+        touch .env
+        echo "AWS_ACCESS_KEY=access_key" >> .env
+        echo "AWS_SECRET_ACCESS_KEY=secret_key" >> .env
+        npm run start-prod
+    Tags:
+      - Key: Name
+        Value: lksapps1a

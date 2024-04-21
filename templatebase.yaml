@@ -1,0 +1,48 @@
+Parameters:
+  VpcCIDR:
+    Description: VPC CIDR
+    Type: String
+    Default: 175.20.0.0/16
+
+  PublicSubnet1CIDR:
+    Description: VPC For AZ 1
+    Type: String
+    Default: 175.20.0.0/25
+
+  PublicSubnet2CIDR:
+    Description: VPC For AZ 2
+    Type: String
+    Default: 175.20.0.128/25
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: lksvpc
+          
+#insert here ^^^
+Outputs:
+  VPC:
+    Description: A reference to the created VPC
+    Value: !Ref VPC
+
+  PublicSubnets:
+    Description: A list of the public subnets
+    Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
+
+  PublicSubnet1:
+    Description: A reference to the public subnet in the 1st Availability Zone
+    Value: !Ref PublicSubnet1
+
+  PublicSubnet2:
+    Description: A reference to the public subnet in the 2nd Availability Zone
+    Value: !Ref PublicSubnet2
+
+  InternetGateway:
+    Description: A reference to the created Internet Gateway
+    Value: !Ref InternetGateway

@@ -1,0 +1,50 @@
+InternetGateway:
+  Type: AWS::EC2::InternetGateway
+  Properties:
+    Tags:
+      - Key: Name
+        Value: lksigw
+
+InternetGatewayAttachment:
+  Type: AWS::EC2::VPCGatewayAttachment
+  Properties:
+    InternetGatewayId: !Ref InternetGateway
+    VpcId: !Ref VPC
+
+PublicSubnet1:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref VPC
+    AvailabilityZone: !Select [ 0, !GetAZs '' ]
+    CidrBlock: !Ref PublicSubnet1CIDR
+    MapPublicIpOnLaunch: true
+    Tags:
+      - Key: Name
+        Value: public-subnet-a
+
+PublicSubnet2:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref VPC
+    AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+    CidrBlock: !Ref PublicSubnet2CIDR
+    MapPublicIpOnLaunch: true
+    Tags:
+      - Key: Name
+        Value: public-subnet-b
+
+PublicRouteTable:
+  Type: AWS::EC2::RouteTable
+  Properties:
+    VpcId: !Ref VPC
+    Tags:
+      - Key: Name
+        Value: lkspublic
+
+DefaultPublicRoute:
+  Type: AWS::EC2::Route
+  DependsOn: InternetGatewayAttachment
+  Properties:
+    RouteTableId: !Ref PublicRouteTable
+    DestinationCidrBlock: 0.0.0.0/0
+    GatewayId: !Ref InternetGateway
